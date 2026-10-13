@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Name Converter</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 80px auto;
+      padding: 20px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    #result {
+      padding: 15px;
+      background: #f3f3f3;
+      font-size: 20px;
+      min-height: 24px;
+      word-break: break-all;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Name Converter</h2>
+
+  <input
+    type="text"
+    id="nameInput"
+    placeholder="이름을 입력하세요"
+    autocomplete="off"
+  >
+
+  <div id="result">E) </div>
+
+  <button onclick="copyResult()">복사</button>
+
+  <script>
+    const input = document.getElementById("nameInput");
+    const result = document.getElementById("result");
+
+    input.addEventListener("input", function () {
+      const text = input.value.toUpperCase();
+
+      if (text) {
+        result.textContent = "E) " + text;
+      } else {
+        result.textContent = "E) ";
+      }
+    });
+
+    function copyResult() {
+      navigator.clipboard.writeText(result.textContent);
+    }
+  </script>
+
+</body>
+</html>
