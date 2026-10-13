@@ -3,73 +3,588 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Name Converter</title>
+
+  <title>Name Formatter</title>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 500px;
-      margin: 80px auto;
-      padding: 20px;
-    }
-
-    input {
-      width: 100%;
+    * {
       box-sizing: border-box;
-      padding: 14px;
-      font-size: 18px;
-      margin-bottom: 15px;
     }
 
-    #result {
-      padding: 15px;
-      background: #f3f3f3;
-      font-size: 20px;
-      min-height: 24px;
-      word-break: break-all;
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #16181b;
+      --subtext: #7a7f87;
+      --border: #e4e7eb;
+      --soft: #f2f3f5;
+      --dark: #1b1d20;
+      --dark-hover: #33363a;
+      --success: #24865a;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+
+      font-family:
+        Inter,
+        Pretendard,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    .header {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--subtext);
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -0.04em;
+    }
+
+    .description {
+      margin-top: 10px;
+      color: var(--subtext);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.02),
+        0 12px 38px rgba(0,0,0,0.04);
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      resize: vertical;
+
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      padding: 16px;
+
+      font-size: 15px;
+      line-height: 1.7;
+
+      font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+      outline: none;
+      transition: 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #a7abb1;
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.035);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--subtext);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+
+    .result-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .empty {
+      padding: 30px 10px;
+      text-align: center;
+      color: #a0a4aa;
+      font-size: 13px;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding: 11px 12px 11px 15px;
+
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .result-text {
+      flex: 1;
+      min-width: 0;
+
+      font-size: 14px;
+      font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+
+      word-break: break-word;
     }
 
     button {
-      margin-top: 15px;
-      padding: 12px 20px;
-      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+
+      height: 40px;
+      padding: 0 16px;
+
+      font-size: 13px;
+      font-weight: 650;
+
       cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .copy-single {
+      background: var(--soft);
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .copy-single:hover {
+      background: #e6e8eb;
+    }
+
+    .copy-single.copied {
+      color: var(--success);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .secondary {
+      background: var(--soft);
+      color: var(--text);
+    }
+
+    .secondary:hover {
+      background: #e6e8eb;
+    }
+
+    .primary {
+      background: var(--dark);
+      color: white;
+    }
+
+    .primary:hover {
+      background: var(--dark-hover);
+    }
+
+    .status {
+      margin-top: 13px;
+      height: 18px;
+      text-align: right;
+      font-size: 12px;
+      color: var(--success);
+      opacity: 0;
+      transition: 0.25s;
+    }
+
+    .status.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 30px 15px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .action-group {
+        width: 100%;
+      }
+
+      .action-group button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 
+
 <body>
 
-  <h2>Name Converter</h2>
+  <main class="container">
 
-  <input
-    type="text"
-    id="nameInput"
-    placeholder="이름을 입력하세요"
-    autocomplete="off"
-  >
+    <div class="header">
+      <div class="eyebrow">TEXT UTILITY</div>
 
-  <div id="result">E) </div>
+      <h1>Name Formatter</h1>
 
-  <button onclick="copyResult()">복사</button>
+      <div class="description">
+        이름을 한 줄에 하나씩 입력하세요.
+        특수문자는 자동으로 제거되고 영문은 대문자로 변환됩니다.
+      </div>
+    </div>
+
+
+    <section class="card">
+
+      <div class="section-title">
+        INPUT
+      </div>
+
+      <textarea
+        id="input"
+        placeholder="John-Smith!
+amy_lee@
+Jean.Pierre
+Maria (Test)"
+        spellcheck="false"
+      ></textarea>
+
+      <div class="info-row">
+        <span>한 줄에 이름 하나씩 입력</span>
+        <span id="count">0 names</span>
+      </div>
+
+
+      <div class="divider"></div>
+
+
+      <div class="section-title">
+        RESULT
+      </div>
+
+      <div
+        class="result-list"
+        id="resultList"
+      >
+        <div class="empty">
+          변환된 결과가 여기에 표시됩니다.
+        </div>
+      </div>
+
+
+      <div class="actions">
+
+        <div class="action-group">
+          <button
+            class="secondary"
+            id="resetButton"
+          >
+            초기화
+          </button>
+        </div>
+
+
+        <div class="action-group">
+          <button
+            class="primary"
+            id="copyAllButton"
+          >
+            전체 복사
+          </button>
+        </div>
+
+      </div>
+
+
+      <div
+        class="status"
+        id="status"
+      >
+        전체 결과가 복사되었습니다.
+      </div>
+
+    </section>
+
+  </main>
+
 
   <script>
-    const input = document.getElementById("nameInput");
-    const result = document.getElementById("result");
 
-    input.addEventListener("input", function () {
-      const text = input.value.toUpperCase();
+    const input =
+      document.getElementById("input");
 
-      if (text) {
-        result.textContent = "E) " + text;
-      } else {
-        result.textContent = "E) ";
-      }
-    });
+    const resultList =
+      document.getElementById("resultList");
 
-    function copyResult() {
-      navigator.clipboard.writeText(result.textContent);
+    const count =
+      document.getElementById("count");
+
+    const copyAllButton =
+      document.getElementById("copyAllButton");
+
+    const resetButton =
+      document.getElementById("resetButton");
+
+    const status =
+      document.getElementById("status");
+
+
+    function cleanName(name) {
+
+      return name
+
+        // 영문, 숫자, 한글, 공백을 제외한 문자 제거
+        .replace(/[^a-zA-Z0-9가-힣\s]/g, " ")
+
+        // 공백 여러 개를 하나로
+        .replace(/\s+/g, " ")
+
+        // 앞뒤 공백 제거
+        .trim()
+
+        // 대문자로 변환
+        .toUpperCase();
+
     }
+
+
+    function getFormattedNames() {
+
+      return input.value
+        .split(/\r?\n/)
+        .map(line => cleanName(line))
+        .filter(line => line !== "")
+        .map(line => "E) " + line);
+
+    }
+
+
+    function renderResults() {
+
+      const names =
+        getFormattedNames();
+
+      count.textContent =
+        names.length + " names";
+
+
+      resultList.innerHTML = "";
+
+
+      if (names.length === 0) {
+
+        resultList.innerHTML = `
+          <div class="empty">
+            변환된 결과가 여기에 표시됩니다.
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      names.forEach(name => {
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "result-item";
+
+
+        const text =
+          document.createElement("div");
+
+        text.className =
+          "result-text";
+
+        text.textContent =
+          name;
+
+
+        const button =
+          document.createElement("button");
+
+        button.className =
+          "copy-single";
+
+        button.textContent =
+          "복사";
+
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            await copyText(name);
+
+            button.textContent =
+              "복사됨";
+
+            button.classList.add(
+              "copied"
+            );
+
+
+            setTimeout(() => {
+
+              button.textContent =
+                "복사";
+
+              button.classList.remove(
+                "copied"
+              );
+
+            }, 1200);
+
+          }
+        );
+
+
+        item.appendChild(text);
+        item.appendChild(button);
+
+        resultList.appendChild(item);
+
+      });
+
+    }
+
+
+    async function copyText(text) {
+
+      try {
+
+        await navigator.clipboard
+          .writeText(text);
+
+      }
+
+      catch {
+
+        const temp =
+          document.createElement("textarea");
+
+        temp.value =
+          text;
+
+        document.body
+          .appendChild(temp);
+
+        temp.select();
+
+        document.execCommand("copy");
+
+        temp.remove();
+
+      }
+
+    }
+
+
+    copyAllButton.addEventListener(
+      "click",
+      async () => {
+
+        const names =
+          getFormattedNames();
+
+        if (names.length === 0) {
+          return;
+        }
+
+
+        await copyText(
+          names.join("\n")
+        );
+
+
+        status.classList.add("show");
+
+
+        setTimeout(() => {
+
+          status.classList.remove("show");
+
+        }, 1600);
+
+      }
+    );
+
+
+    resetButton.addEventListener(
+      "click",
+      () => {
+
+        input.value = "";
+
+        renderResults();
+
+        input.focus();
+
+      }
+    );
+
+
+    input.addEventListener(
+      "input",
+      renderResults
+    );
+
+
+    renderResults();
+
   </script>
 
 </body>
